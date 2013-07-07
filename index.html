@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+	<head>
+        <meta charset="utf-8">
+        <title>数据挖掘课程 实验演示 2010051933 黎欣健</title>
+        <style>
+            #canvasContainer {
+                text-align: center;
+            }
+            #mainCanvas {
+                border: 1px solid #000;
+            }
+        </style>
+	</head>
+	<body>
+        <div id="canvasContainer">
+            <canvas id="mainCanvas" width="600" height="450" ></canvas>
+            <hr>
+            <div>
+                k = <input id="kv" type="number" maxlength="2" style="width: 50px">
+                <button id="calc_k">计算</button>
+                <button onclick="location.reload() ">重置</button>
+            </div><!--
+            <div>
+                eps = <input id="epsv" type="number" maxlength="2" style="width: 50px">
+                MinPts = <input id="minptsv" type="number" maxlength="2" style="width: 50px">
+                <button id="calc_d">计算</button>
+            </div>-->
+
+        </div>
+
+
+
+        <script type="text/javascript" src="js/zepto.min.js"></script>
+        <script type="text/javascript" src="js/kmeans.js"></script>
+        <script type="text/javascript" src="js/dbscan.js"></script>
+        <script>
+            $(function(){
+                var exp = {};
+
+                exp.c$ = $('#mainCanvas');
+                exp.c = exp.c$.get(0);
+                exp.ctx = exp.c.getContext('2d');
+                exp.colors = ['#FF0000', '#FFFF00', '#0000FF', '#008000', '#00FFFF', '#FF00FF', '#800080', '#00FF00', '#b2d235', '#121a2a'];
+                exp.point_r = 3;
+                exp.k_def = 0;
+                exp.points = [];
+                exp.initCentroids = [];
+                exp.canvas_click = function(e){
+                    if (exp.k_def + 1 > exp.colors.length) {
+                        alert('点太多');
+                        return;
+                    }
+                    exp.k_def++;
+                    $('#kv').val(exp.k_def);
+
+                    exp.initCentroids.push([e.offsetX, e.offsetY]);
+
+                    var new_points = [];
+                    for (var i=0;i<100;i++) {
+                        var r = getRandomInt(0, 180);
+                        var a = getRandomInt(0, 359) * Math.PI / 180; //
+                        var x = Math.floor(e.offsetX + r * Math.cos(a));
+                        var y = Math.floor(e.offsetY + r * Math.sin(a));
+
+                        new_points.push([x,y]);
+                        exp.points.push([x,y]);
+                    }
+
+                    for (var i=0;i<new_points.length;i++) {
+                        exp.draw_point(new_points[i][0], new_points[i][1], '#000000');
+                    }
+                };
+
+                exp.kmeans_calc = function(){
+                    exp.k_def = parseInt($('#kv').val());
+                    if (exp.k_def < 2 ) {
+                        alert('请多点一些点');
+                        return;
+                    }
+                    var g = kmeans(exp.points, exp.initCentroids, exp.k_def);
+                    //var g = kmeans(exp.points, [], exp.k_def);
+
+                    for (var i=0;i< g.length;i++) {
+                        for (var j=0; j<g[i].length;j++) {
+                            exp.draw_point(g[i][j][0], g[i][j][1], exp.colors[i]);
+                        }
+                    }
+
+                };
+
+                exp.dbscan_calc = function(){
+                    if (exp.points < 200 ) {
+                        alert('请多点一些点');
+                        return;
+                    }
+
+                    DBSCAN(exp.points, parseInt($('#epsv').val()), parseInt($('#minptsv').val()));
+
+//                    for (var i=0;i< g.length;i++) {
+//                        for (var j=0; j<g[i].length;j++) {
+//                            exp.draw_point(g[i][j][0], g[i][j][1], exp.colors[i]);
+//                        }
+//                    }
+
+                };
+
+                exp.draw_point = function (x, y, color) {
+                    exp.ctx.beginPath();
+                    exp.ctx.arc(x, y, exp.point_r, 0, 2*Math.PI, true);
+                    exp.ctx.fillStyle = color;
+                    exp.ctx.fill();
+                };
+
+                exp.c$.on('click', exp.canvas_click);
+                $('#calc_k').on('click', exp.kmeans_calc);
+                $('#calc_d').on('click', exp.dbscan_calc);
+
+                function getRandomInt (min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+            });
+        </script>
+	</body>
+</html>
