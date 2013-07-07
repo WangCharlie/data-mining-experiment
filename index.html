@@ -19,14 +19,20 @@
             <div>
                 k = <input id="kv" type="number" maxlength="2" style="width: 50px">
                 <button id="calc_k">计算</button>
-                <button onclick="location.reload() ">重置</button>
+                <button id="btn_reset" onclick="location.reload() ">重置</button>
             </div><!--
             <div>
                 eps = <input id="epsv" type="number" maxlength="2" style="width: 50px">
                 MinPts = <input id="minptsv" type="number" maxlength="2" style="width: 50px">
                 <button id="calc_d">计算</button>
             </div>-->
+            <div style="text-align:left;width:600px;margin:auto">
+                演示步骤：<br>
+                1. 在上方画板区域任意位置点击鼠标，将会在鼠标周边生成一系列随机的点。<br>
+                2. 点击计算按钮，则进行k均值聚类计算，聚类完成之后会自动按照分类对画板上面的点着色，同类同色。<br><br>
+            </div>
 
+            <div style="color:#668;font-size:14px;margin-top:3em">2010051933 黎欣健</div>
         </div>
 
 
@@ -113,7 +119,11 @@
                 };
 
                 exp.c$.on('click', exp.canvas_click);
-                $('#calc_k').on('click', exp.kmeans_calc);
+
+                $('#calc_k').on('click', function(){
+                    exp.kmeans_calc;
+                    $('#calc_k').attr('disabled','disabled');
+                });
                 $('#calc_d').on('click', exp.dbscan_calc);
 
                 function getRandomInt (min, max) {
