@@ -55,7 +55,7 @@ function calcCenter($clusters, $data)
 /**
 * Calculates the center coordinates of a set of points
 * @param array $coords An array of x and y points
-* @return array An array containing the x and y coordinates of the center point
+* @return array An array containing the x and y coordinates of the center points
 */
 function recenter($coords)
 {
